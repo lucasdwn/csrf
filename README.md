@@ -13,7 +13,7 @@ Este projeto tem como objetivo demonstrar, de forma prática, a vulnerabilidade 
 │   │   ├── routes/
 │   │   │   ├── db.ts
 │   │   │   └── index.ts
-│   │   └── comandos.sql
+│   │   ├── comandos.sql
 │   │   └── index.ts
 │   ├── package.json
 │   └── tsconfig.json
