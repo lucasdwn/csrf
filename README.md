@@ -8,13 +8,23 @@ Este projeto tem como objetivo demonstrar, de forma prática, a vulnerabilidade 
 ```
 ├── server-vitima/
 │   ├── public/
+│   │   └── login.html
 │   ├── src/
+│   │   ├── routes/
+│   │   │   ├── db.ts
+│   │   │   └── index.ts
+│   │   └── comandos.sql
+│   │   └── index.ts
 │   ├── package.json
 │   └── tsconfig.json
 │
 └── server-ataque/
     ├── public/
+    │   ├── csrf-get-attack.html
+    │   ├── csrf-post-attack-seguro.html
+    │   └── csrf-post-attack.html
     ├── src/
+    │   └── index.ts
     ├── package.json
     └── tsconfig.json
 ```
