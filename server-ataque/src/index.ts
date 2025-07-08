@@ -12,8 +12,14 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Inicializa o servidor na porta definida
+// Edite o arquivo hosts no seu sistema operacional:
+// C:\Windows\System32\drivers\etc\hosts
+// Adicione as linhas:
+// 127.0.0.1   vitima.local
+// 127.0.0.1   atacante.local
+// Isso permitirá acessar o servidor via http://vitima.local:3002
 app.listen(PORT, function () {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
+  console.log(`Servidor rodando em http://atacante.local:${PORT}`);
 });
 
 // ****** ROTAS PARA PÁGINAS HTML ESTÁTICAS ******

@@ -47,7 +47,16 @@ npm i
 
 3. Execute os comandos SQL presentes no arquivo `server-vitima/src/comandos.sql` para criar as tabelas necessárias;
 
-4. Iniciando o servidor
+4. De acordo com a especificação do protocolo HTTP, a porta não é considerada parte do domínio para fins de escopo de cookies. Desta forma, tanto `localhost:3001` quanto `localhost:3002` estão compartilhando o mesmo cookie de sessão, mesmo sendo servidores diferentes.
+Para fazer os testes desse exercício recomendo criar subdomínios diferentes (via hosts). Edite o arquivo `hosts` no seu sistema operacional:
+ - Adicione as seguintes linhas no arquivo `C:\Windows\System32\drivers\etc\hosts`:
+ ``` 
+127.0.0.1   vitima.local
+127.0.0.1   atacante.local
+```
+- O código disponível está configurado para o `server-vitima` rodar em `http://vitima.local:3001` e o `server-ataque` em `http://atacante.local:3002`.
+
+5. Iniciando o servidor
 Será necessário executar o comando a seguir em cada um dos servidores (vítima e ataaque):
 ```
 npm start

@@ -13,17 +13,12 @@ router.post("/login", async (req: Request, res: Response) => {
   );
 
   if (result.rows.length > 0) {
-    // Definindo cookie de autenticação
+    // Definindo cookie de autenticação    
     res.cookie("user", result.rows[0].id, {
       httpOnly: false,
-      sameSite: "lax", // Modificaremos isso depois para "strict"
-    });
-
-    /*res.cookie("user", result.rows[0].id, {
-      httpOnly: false,
-      sameSite: "strict",
+      sameSite: "lax", // Protege contra CSRF
       secure: false // true em produção com HTTPS
-    });*/
+    });
 
     res.json({ message: "Login efetuado com sucesso!" });
   } else {
@@ -33,11 +28,11 @@ router.post("/login", async (req: Request, res: Response) => {
 
 // Rota vulnerável a CSRF
 // Teste rodando em outro servidor, por exemplo:
-// http://localhost:3002/csrf-post-attack
+// http://atacante.local:3002/csrf-post-attack
 router.post("/change-password", async (req: Request, res: Response) => {
   const { password } = req.body;
   const user = req.cookies.user;
-
+console.log("Usuário:", user);
   if (!user) {
     res.status(401).json({ error: "Usuário não autenticado" });
   } else if (!password) {
@@ -52,8 +47,9 @@ router.post("/change-password", async (req: Request, res: Response) => {
   }
 });
 
+// http://atacante.local:3002/csrf-post-attack-seguro
 router.post("/change-password-segura", async (req: Request, res: Response) => {
-  if (!req.headers.origin?.startsWith("http://localhost:3001")) {
+  if (!req.headers.origin?.startsWith("http://vitima.local:3001")) {
     res.status(403).json({ error: "Requisição inválida" });
   } else {
     const { password } = req.body;
@@ -75,7 +71,7 @@ router.post("/change-password-segura", async (req: Request, res: Response) => {
 });
 
 // Rota vulnerável a CSRF
-// http://localhost:3002/csrf-get-attack
+// http://atacante.local:3002/csrf-get-attack
 router.get("/contact", async (req: Request, res: Response) => {
   const { name, phone } = req.query;
   const user = req.cookies.user;

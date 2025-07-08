@@ -29,8 +29,14 @@ app.use(cors());
 app.use(express.static("public"));
 
 // Inicializa o servidor na porta definida
+// Edite o arquivo hosts no seu sistema operacional:
+// C:\Windows\System32\drivers\etc\hosts
+// Adicione as linhas:
+// 127.0.0.1   vitima.local
+// 127.0.0.1   atacante.local
+// Isso permitirá acessar o servidor via http://vitima.local:3001
 app.listen(PORT, function () {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
+  console.log(`Servidor rodando em http://vitima.local:${PORT}`);
 });
 
 // ****** ROTA PARA PÁGINA HTML ESTÁTICA ******
