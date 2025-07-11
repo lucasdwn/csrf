@@ -23,7 +23,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Middleware para habilitar requisições de diferentes origens (CORS)
-app.use(cors());
+app.use(cors({
+  origin: "http://vitima.local:3001", // Permite requisições apenas do domínio da vítima
+  credentials: true // Permite o envio de cookies entre domínios
+}));
 
 // Middleware para servir arquivos estáticos a partir do diretório "public"
 app.use(express.static("public"));
@@ -42,6 +45,11 @@ app.listen(PORT, function () {
 // ****** ROTA PARA PÁGINA HTML ESTÁTICA ******
 app.get("/", (_: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "..", "public", "login.html"));
+});
+
+// Resposta do Exercício 3
+app.get("/change-pwd", (_: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, "..", "public", "change-pwd.html"));
 });
 
 app.use("/", router);
