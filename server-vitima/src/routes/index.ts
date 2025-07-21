@@ -1,7 +1,34 @@
 import express, { Request, Response } from "express";
 import db from "./db";
+import { doubleCsrf } from "csrf-csrf";
 
 const router = express.Router();
+
+// Configuração do CSRF usando Double Submit Cookie
+const {
+  doubleCsrfProtection,
+  generateCsrfToken,
+  invalidCsrfTokenError,
+  validateRequest,
+} = doubleCsrf({
+  // Segredo forte; em produção, use VAR DE AMBIENTE
+  getSecret: () => process.env.CSRF_SECRET || "my-very-strong-secret-key",
+  // Identificador de sessão (pode ser cookie de usuário ou session id)
+  getSessionIdentifier: (req) => req.cookies.user || "",
+  // Nome do cookie onde o token HMAC+nonce será armazenado
+  cookieName: "XSRF-TOKEN",
+  // Opções do cookie
+  cookieOptions: {
+    sameSite: "lax",
+    path: "/",
+    secure: false,    // true em HTTPS de produção
+    httpOnly: true,   // impede acesso via JS
+  },
+  // Quais métodos NÃO precisam de proteção
+  ignoredMethods: ["GET", "HEAD", "OPTIONS"],
+  // Como extrair o token enviado pelo front (header)
+  getCsrfTokenFromRequest: (req) => req.headers["x-csrf-token"] as string,
+});
 
 // Simula login e define cookie de autenticação
 router.post("/login", async (req: Request, res: Response) => {
@@ -23,6 +50,19 @@ router.post("/login", async (req: Request, res: Response) => {
   } else {
     res.status(401).json({ error: "Credenciais inválidas" });
   }
+});
+
+// Rota para gerar token CSRF
+router.get("/csrf-token", (req: Request, res: Response) => {
+  const user = req.cookies.user;
+  if (!user) {
+    res.status(401).json({ error: "Usuário não autenticado" });
+    return;
+  }
+  
+  // generateCsrfToken define automaticamente o cookie XSRF-TOKEN e retorna o token
+  const token = generateCsrfToken(req, res);
+  res.json({ csrfToken: token });
 });
 
 // Rota vulnerável a CSRF
@@ -92,8 +132,19 @@ router.post("/change-password-segura", async (req: Request, res: Response) => {
   }
 });
 
-// Parte da resposta do Exercício 3
-router.post("/change-password-exer03", async (req: Request, res: Response) => {
+// Wrapper para capturar erros CSRF e retornar JSON
+const csrfProtectionWrapper = (req: Request, res: Response, next: any) => {
+  doubleCsrfProtection(req, res, (error: any) => {
+    if (error) {
+      // Se houver erro CSRF, retorna JSON em vez de HTML
+      return res.status(403).json({ error: "Token CSRF inválido ou ausente" });
+    }
+    next();
+  });
+};
+
+// Parte da resposta do Exercício 3 - Protegida contra CSRF
+router.post("/change-password-exer03", csrfProtectionWrapper, async (req: Request, res: Response) => {
   const { password, currentPassword } = req.body;
   const user = req.cookies.user;
 
