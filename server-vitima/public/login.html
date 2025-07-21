@@ -33,7 +33,7 @@
               "Content-Type": "application/json"
             },
             body: JSON.stringify({ username, password }),
-            credentials: "include" // Importante para permitir envio/recebimento de cookies
+            credentials: "include"
           });
 
           const data = await response.json();
@@ -41,6 +41,13 @@
           if (response.ok) {
             status.textContent = data.message;
             status.style.color = "green";
+
+            // Buscar o token CSRF
+            const tokenResponse = await fetch("/csrf-token", {
+              credentials: "include"
+            });
+            const { csrfToken } = await tokenResponse.json();
+            localStorage.setItem("csrfToken", csrfToken);
           } else {
             status.textContent = data.error || "Erro ao fazer login.";
             status.style.color = "red";

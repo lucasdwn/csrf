@@ -27,8 +27,8 @@ router.post("/login", async (req: Request, res: Response) => {
 
 // Rota vulnerável a CSRF
 // http://atacante.local:3002/csrf-get-attack
-router.get("/contact", async (req: Request, res: Response) => {
-  const { name, phone } = req.query;
+router.post("/contact", async (req: Request, res: Response) => {
+  const { name, phone } = req.body;
   const user = req.cookies.user;
 
   if (!user) {

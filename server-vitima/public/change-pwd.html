@@ -28,12 +28,15 @@
         const currentPassword = document.getElementById("currentPassword").value;
         const password = document.getElementById("password").value;
 
+        const csrfToken = localStorage.getItem("csrfToken");
+
         const response = await fetch("/change-password-exer03", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "x-csrf-token": csrfToken
           },
-          credentials: "include", // para enviar o cookie
+          credentials: "include",
           body: JSON.stringify({ currentPassword, password })
         });
 
